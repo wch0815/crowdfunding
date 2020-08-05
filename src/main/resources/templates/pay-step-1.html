@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/theme.css">
+
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        #footer {
+            padding: 15px 0;
+            background: #fff;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+
+        #topcontrol {
+            color: #fff;
+            z-index: 99;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            background: #222;
+            position: relative;
+            right: 14px !important;
+            bottom: 11px !important;
+            border-radius: 3px !important;
+        }
+
+        #topcontrol:after {
+            /*top: -2px;*/
+            left: 8.5px;
+            content: "\f106";
+            position: absolute;
+            text-align: center;
+            font-family: FontAwesome;
+        }
+
+        #topcontrol:hover {
+            color: #fff;
+            background: #18ba9b;
+            -webkit-transition: all 0.3s ease-in-out;
+            -moz-transition: all 0.3s ease-in-out;
+            -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .label-type, .label-status, .label-order {
+            background-color: #fff;
+            color: #f60;
+            padding: 5px;
+            border: 1px #f60 solid;
+        }
+
+        #typeList :not(:first-child) {
+            margin-top: 20px;
+        }
+
+        .label-txt {
+            margin: 10px 10px;
+            border: 1px solid #ddd;
+            padding: 4px;
+            font-size: 14px;
+        }
+
+        .panel {
+            border-radius: 0;
+        }
+
+        .progress-bar-default {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar-wrapper">
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" th:href="@{/index}" style="font-size:32px;">人人筹平台</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse" style="float:right;">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
+                                    class="glyphicon glyphicon-user"></i> <span th:text="${user.headportrait}"></span><span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a th:href="@{/member}"><i class="glyphicon glyphicon-scale"></i> 会员中心</a></li>
+                                <li><a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a></li>
+                                <li class="divider"></li>
+                                <li><a th:href="@{/exit}"><i class="glyphicon glyphicon-off"></i> 退出系统</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+
+<div class="container theme-showcase" role="main">
+
+
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="text-align:center;height: 70px">
+                        <div class="container-fluid">
+                            <div class="row clearfix">
+                                <div class="col-md-3 column">
+                                    <div class="progress"
+                                         style="height:50px;border-radius:0;    position: absolute;width: 75%;right:49px;">
+                                        <div class="progress-bar progress-bar-success" role="progressbar"
+                                             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                                             style="width: 100%;height:50px;">
+                                            <div style="font-size:16px;margin-top:15px;">1. 确认项目信息</div>
+                                        </div>
+                                    </div>
+                                    <div style="right: 0;border:10px solid #ddd;border-left-color: #88b7d5;border-width: 25px;position: absolute;
+                                             border-left-color: rgba(92, 184, 92, 1);
+                                             border-top-color: rgba(92, 184, 92, 0);
+                                             border-bottom-color: rgba(92, 184, 92, 0);
+                                             border-right-color: rgba(92, 184, 92, 0);
+                                        ">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 column">
+                                    <div class="progress"
+                                         style="height:50px;border-radius:0;position: absolute;width: 75%;right:49px;">
+                                        <div class="progress-bar progress-bar-default" role="progressbar"
+                                             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                                             style="width: 100%;height:50px;">
+                                            <div style="font-size:16px;margin-top:15px;">2. 支付完成</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div class="container-fluid">
+                            <div class="row clearfix">
+                                <div class="col-md-12 column">
+                                    <blockquote
+                                            style="border-left: 5px solid #f60;color:#f60;padding: 0 0 0 20px;margin-top: 2%">
+                                        <b>
+                                            请确认您所选择的回报项信息和项目信息
+                                        </b>
+                                    </blockquote>
+                                </div>
+                                <div class="col-md-12 column" id="app">
+                                    <form method="post" action="/order/alipay">
+                                        <table class="table table-bordered" style="text-align:center;">
+                                            <thead>
+                                            <tr style="background-color:#ddd;">
+                                                <td>项目编号</td>
+                                                <td>项目名称</td>
+                                                <td>发起人</td>
+                                                <td>目标金额</td>
+                                                <td>已筹金额</td>
+                                                <td width="300">回报内容</td>
+                                                <td width="100">支持金额</td>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td>
+                                                    <span id="pid" th:text="${projects.pid}" th:value="${projects.pid}"
+                                                          th:name="${'pid'}"></span>
+                                                </td>
+                                                <td>
+                                                    <span id="ipname" th:text="${projects.ipname}"
+                                                          th:value="${projects.ipname}"
+                                                          th:name="${'ipname'}"></span>
+                                                </td>
+                                                <td><span th:text="${obj.realname}"></span></td>
+                                                <td><span th:text="${projects.ipmoney + ' 元'}"></span></td>
+                                                <td><span th:text="${projects.money + ' 元'}"></span></td>
+                                                <td>
+                                                    <span id="desc"
+                                                          th:text="${'回报类型是：' + payBack.pdtype + '，具体是：' + payBack.pbcontent + '，并且在众筹成功的' + payBack.pbdate + '内实现'}"
+                                                          th:value="${'回报类型是：' + payBack.pdtype + '，具体是：' + payBack.pbcontent + '，并且在众筹成功的' + payBack.pbdate + '内实现'}"
+                                                          th:name="${'desc'}"></span>
+                                                </td>
+                                                <td><input id="money" type="text" class="form-control" value="1"
+                                                           name="total_amount"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div style="float:right;">
+                                            <button type="button" @click="toPay()" class="btn btn-warning btn-lg"
+                                                    style="float:right;">
+                                                <i class="glyphicon glyphicon-credit-card"></i> 去结算
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <div class="container">
+                                    <div class="row clearfix">
+                                        <div class="col-md-12 column">
+                                            <blockquote>
+                                                <p>
+                                                    <i class="glyphicon glyphicon-info-sign" style="color:#2a6496;"></i>
+                                                    提示
+                                                </p><br>
+                                                <span style="font-size:12px;">1.众筹并非商品交易，存在一定风险。支持者根据自己的判断选择、支持众筹项目，与发起人共同实现梦想并获得发起人承诺的回报。<br>
+                                2.众筹平台仅提供平台网络空间及技术支持等中介服务，众筹仅存在于发起人和支持者之间，使用众筹平台产生的法律后果由发起人与支持者自行承担。<br>
+                                3.本项目必须在2017-06-04之前达到 ￥1000000.00 的目标才算成功，否则已经支持的订单将取消。订单取消或募集失败的，您支持的金额将原支付路径退回。<br>
+                                4.请在支持项目后15分钟内付款，否则您的支持请求会被自动关闭。<br>
+                                5.众筹成功后由发起人统一进行发货，售后服务由发起人统一提供；如果发生发起人无法发放回报、延迟发放回报、不提供回报后续服务等情况，您需要直接和发起人协商解决。<br>
+                                6.如您不同意上述风险提示内容，您有权选择不支持；一旦选择支持，视为您已确认并同意以上提示内容。</span>
+                                            </blockquote>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container" style="margin-top:20px;">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div id="footer">
+                    <div class="footerNav">
+                        <a rel="nofollow" href="http://www.qf.com">关于我们</a> | <a rel="nofollow"
+                                                                                 href="http://www.qf.com">服务条款</a> | <a
+                            rel="nofollow" href="http://www.qf.com">免责声明</a> | <a rel="nofollow"
+                                                                                  href="http://www.qf.com">网站地图</a> | <a
+                            rel="nofollow" href="http://www.qf.com">联系我们</a>
+                    </div>
+                    <div class="copyRight">
+                        Copyright ?2010-2014qf.com 版权所有
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div> <!-- /container -->
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    登录
+                </h4>
+            </div>
+            <div class="modal-body" style="width: 100%">
+                <div class="input-group" style="width: 100%">
+                    <div class="form-group" style="width: 100%" id="pay">
+                        <div id="froms">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script src="/jquery/jquery-2.1.1.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/script/docs.min.js"></script>
+<script src="/script/back-to-top.js"></script>
+<script>
+    $('#myTab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+</script>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            alipayBean:{}
+        },
+        methods: {
+            toPay: function () {
+
+                out_trade_no = $("#pid").text();
+                subject = $("#ipname").text();
+                total_amount = $("#money").val();
+                body = $("#desc").text();
+                uuid = (Math.random()*10000000).toString(16).substr(0,4)+'-'+(new Date()).getTime()+'-'+Math.random().toString().substr(2,5) + out_trade_no;
+                alert(uuid)
+                document.write("<form action='order/alipay' method='post' name='form1' style='display:none'>");
+                document.write("<input type='text' name='out_trade_no' value="+uuid+">");
+                document.write("<input type='text' name='subject' value="+subject+">");
+                document.write("<input type='text' name='total_amount' value="+total_amount+">");
+                document.write("<input type='text' name='body' value="+body+">");
+                document.write("</form>");
+                document.form1.submit();
+            }
+        }
+    })
+</script>
+</body>
+</html>

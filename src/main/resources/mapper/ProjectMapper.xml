@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cheng.dao.IProjectDao">
+
+
+    <select id="getProjects" resultType="Projects">
+        select * from tb_projects limit 0,6
+    </select>
+
+    <resultMap id="proMap" type="Projects" autoMapping="true">
+        <collection property="type" ofType="CrowdfundingType" autoMapping="true"/>
+    </resultMap>
+
+    <select id="getAllProject" resultMap="proMap">
+        SELECT * from tb_crowdfunding_type t,tb_projects p WHERE p.ctid = t.ctid
+    </select>
+
+    <select id="getProjectByPid" resultType="Projects">
+        select * from tb_projects where pid = #{pid}
+    </select>
+
+    <select id="getPayBackByPid" resultType="PayBack">
+        SELECT * from tb_pay_back WHERE pid = #{pid}
+    </select>
+
+    <select id="getStuRealNameInfo" resultType="StuRealNameInfo">
+        select s.*
+            from tb_projects p, tb_user u, tb_my_initiate m, tb_sturealnameinfo s
+              WHERE p.pid = m.pid
+                and m.uid = u.uid
+                AND u.uid = s.uid
+                and p.pid = #{pid}
+    </select>
+
+    <select id="getTeaRealNameInfo" resultType="TeaRealNameInfo">
+        select s.*
+            from tb_projects p, tb_user u, tb_my_initiate m, tb_tearealnameinfo s
+              WHERE p.pid = m.pid
+                and m.uid = u.uid
+                AND u.uid = s.uid
+                and p.pid = #{pid}
+    </select>
+
+    <select id="getPatriarchRealNameInfo" resultType="PatriarchRealNameInfo">
+        select s.*
+        from tb_projects p, tb_user u, tb_my_initiate m, tb_patriarchrealnameinfo s
+            WHERE p.pid = m.pid
+                and m.uid = u.uid
+                AND u.uid = s.uid
+                and p.pid = #{pid}
+    </select>
+
+    <insert id="saveAttention">
+        insert into tb_my_attentions values (null, #{pid}, #{uid})
+    </insert>
+
+    <update id="addProjectAttention">
+        update tb_projects set attentions = attentions + 1 where pid = #{pid}
+    </update>
+
+    <select id="getMyAttentions" resultType="MyAttentions">
+        select * from tb_my_attentions where uid = #{uid} and pid = #{pid}
+    </select>
+
+    <update id="subtractionProjectAttention">
+        update tb_projects set attentions = attentions - 1 where pid = #{pid}
+    </update>
+
+    <delete id="deleteAttention">
+        delete from tb_my_attentions where uid = #{uid} and pid = #{pid}
+    </delete>
+
+    <select id="getPayBack" resultType="PayBack">
+        SELECT * from tb_pay_back WHERE pbid = #{pbid}
+    </select>
+
+    <update id="addMoney">
+        update tb_projects set money = money + #{paynum} where pid = #{pid}
+    </update>
+
+    <resultMap id="projectMap" type="Projects" autoMapping="true">
+        <association property="user" javaType="User" autoMapping="true"/>
+    </resultMap>
+
+    <select id="getProject" resultMap="projectMap">
+        SELECT * from tb_my_initiate m, tb_projects p, tb_user u
+            WHERE m.pid = p.pid
+            AND m.uid = u.uid
+    </select>
+
+    <resultMap id="projectttMap" type="Projects" autoMapping="true">
+        <association property="user" javaType="User" autoMapping="true" />
+        <collection property="payBack" ofType="PayBack" autoMapping="true" />
+    </resultMap>
+
+    <select id="getProByPid" resultMap="projectttMap">
+          SELECT * from tb_my_initiate m, tb_projects p, tb_user u, tb_pay_back b
+            WHERE m.pid = p.pid
+            AND m.uid = u.uid
+            AND b.pid = p.pid
+            and p.pid = #{pid}
+    </select>
+
+    <update id="authProject">
+        update tb_projects set state = 1 where pid = #{pid}
+    </update>
+
+</mapper>

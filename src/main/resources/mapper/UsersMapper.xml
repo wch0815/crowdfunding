@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cheng.dao.IUserDao">
+
+	
+	<select id="login" resultType="User">
+        select * from tb_user where username = #{username} and password = #{password}
+    </select>
+
+    <insert id="toReg" useGeneratedKeys="true" keyProperty="uid">
+        insert into tb_user values (null, #{username}, #{password}, #{email}, #{headportrait})
+    </insert>
+
+    <select id="getAllMySupportByUid" resultType="MySupport">
+        select * from tb_my_support where uid = #{uid}
+    </select>
+
+    <select id="lookStuRealNameState" resultType="StuRealNameInfo">
+        select * from tb_sturealnameinfo where uid = #{uid}
+    </select>
+
+    <select id="lookPatRealNameState" resultType="PatriarchRealNameInfo">
+        select * from tb_patriarchrealnameinfo where uid = #{uid}
+    </select>
+
+    <select id="lookTeaRealNameState" resultType="TeaRealNameInfo">
+        select * from tb_tearealnameinfo where uid = #{uid}
+    </select>
+
+    <select id="getUserEasyPay" resultType="EasyPay">
+        select * from tb_easy_pay where uid = #{uid}
+    </select>
+
+    <resultMap id="initiateMap" type="MyInitiate" autoMapping="true">
+        <collection property="project" ofType="Projects" autoMapping="true"/>
+    </resultMap>
+    
+    <select id="getMyInitiate" resultMap="initiateMap">
+        select * from tb_projects p, tb_my_initiate i where p.pid = i.pid and uid = #{uid}
+    </select>
+
+    <select id="getMyAttention" resultType="MyAttentions">
+        select * from tb_projects p, tb_my_attentions i where p.pid = i.pid and uid = #{uid}
+    </select>
+
+    <resultMap id="supperMap" type="MySupport" autoMapping="true">
+        <association property="project" javaType="Projects" autoMapping="true"/>
+    </resultMap>
+
+    <select id="getMySupper" resultMap="supperMap">
+        select * from tb_projects p, tb_my_support i where p.pid = i.pid and uid = #{uid}
+    </select>
+
+    <update id="updateBalance">
+        update tb_easy_pay set epbalance = epbalance - #{paynum} where uid = #{uid}
+    </update>
+
+    <insert id="addMySupport">
+        insert into tb_my_support values (null, #{pid}, #{uid}, #{paynum},now())
+    </insert>
+
+    <select id="getAllUserInfo" resultType="User">
+        select * from tb_user limit #{num},10
+    </select>
+
+    <select id="getUserOfNum" resultType="Integer">
+        select count(1) from tb_user
+    </select>
+
+    <select id="getUserByUid" resultType="User">
+        select uid,username,email,headportrait from tb_user where uid = #{uid}
+    </select>
+
+    <update id="editUser" >
+        update tb_user set username = #{username},headportrait = #{headportrait}, email = #{email} where  uid = #{uid}
+    </update>
+
+    <delete id="deleteUserByUid">
+        delete from tb_user where uid = #{uid}
+    </delete>
+
+    <insert id="addUser">
+        insert into tb_user values (null, #{username},'000000',#{email}, #{headportrait})
+    </insert>
+
+    <select id="selectInfo" resultType="User">
+        SELECT * from tb_user WHERE username LIKE "%"#{info}"%"
+    </select>
+
+    <select id="adminLogin" resultType="Admin">
+        select * from tb_admin where login = #{login} and password = #{password}
+    </select>
+
+    <insert id="saveEasyPay" >
+        insert into tb_easy_pay values (null, #{uid},#{epaccountnumber},#{epidcard},2000,#{eppassword},0)
+    </insert>
+
+</mapper>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        #footer {
+            padding: 15px 0;
+            background: #fff;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+        #topcontrol {
+            color: #fff;
+            z-index: 99;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            background: #222;
+            position: relative;
+            right: 14px !important;
+            bottom: 11px !important;
+            border-radius: 3px !important;
+        }
+
+        #topcontrol:after {
+            /*top: -2px;*/
+            left: 8.5px;
+            content: "\f106";
+            position: absolute;
+            text-align: center;
+            font-family: FontAwesome;
+        }
+
+        #topcontrol:hover {
+            color: #fff;
+            background: #18ba9b;
+            -webkit-transition: all 0.3s ease-in-out;
+            -moz-transition: all 0.3s ease-in-out;
+            -o-transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out;
+        }
+
+    </style>
+</head>
+<body>
+<div>
+<div class="navbar-wrapper" >
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" th:href="@{/index}" style="font-size:32px;">人人筹平台</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse" style="float:right;">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"> <span th:text="${user.headportrait}"></span> </i><span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a th:href="@{/member}"><i class="glyphicon glyphicon-scale"></i> 会员中心</a></li>
+                                <li><a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a></li>
+                                <li class="divider"></li>
+                                <li><a th:href="@{exit}"><i class="glyphicon glyphicon-off"></i> 退出系统</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+</div>
+<div class="container" id="app">
+    <div class="row clearfix">
+        <div class="col-sm-3 col-md-3 column">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="thumbnail" style="    border-radius: 0px;">
+                        <img src="img/services-box1.jpg" class="img-thumbnail" alt="">
+                        <div class="caption" style="text-align:center;">
+                            <h3>
+                                <input type="text" style="display:none" id="uidofvalue" th:value="${user.uid}" />
+                                <span th:text="${user.headportrait}"></span>
+                            </h3>
+                            <div>
+                                <span class="label label-danger" id="menuTree" style="cursor:pointer;" onclick="window.location.href='/getRealNameType'">{{mmm}}</span>
+                                <span class="label label-success" id="menuTree1" style="cursor:pointer;" >{{mmm}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="list-group">
+                <div class="list-group-item active">
+                    资产总览<span class="badge"><i class="glyphicon glyphicon-chevron-right"></i></span>
+                </div>
+                <div class="list-group-item " style="cursor:pointer;">
+                    <a th:href="@{'minecrowdfunding/'+${user.uid}}">我的众筹</a><span class="badge"><i class="glyphicon glyphicon-chevron-right"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-9 col-md-9 column" >
+            <blockquote style="border-left: 5px solid #f60;color:#f60;padding: 0 0 0 20px;">
+                <b>
+                    我的钱包
+                </b>
+            </blockquote>
+            <div class="col-sm-9 col-md-9 column" id="menuTree3">
+                <h3>点击<a th:href="@{'binding/'+${user.uid}}">这里</a>绑定易付宝！</h3>
+            </div>
+            <div  style="width: 600px;height:400px;">
+
+                <ul class="list-group" id="menuTree4">
+                    <li class="list-group-item">
+                        <span>账号：</span><span>{{easyPayInfo.epaccountnumber}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span>银行卡号：</span><span>{{easyPayInfo.epidcard}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span>易付宝余额：</span><span>{{easyPayInfo.epbalance}}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span>众筹资产：</span><span>{{easyPayInfo.epinvestment}}</span>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="container" style="margin-top:20px;">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div id="footer">
+                <div class="footerNav">
+                    <a rel="nofollow" href="http://www.qf.com">关于我们</a> | <a rel="nofollow" href="http://www.qf.com">服务条款</a> | <a rel="nofollow" href="http://www.qf.com">免责声明</a> | <a rel="nofollow" href="http://www.qf.com">网站地图</a> | <a rel="nofollow" href="http://www.qf.com">联系我们</a>
+                </div>
+                <div class="copyRight">
+                    Copyright ?2017-2017qf.com 版权所有
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+<script src="/jquery/jquery-2.1.1.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/script/docs.min.js"></script>
+<script src="/script/back-to-top.js"></script>
+<script src="/script/echarts.js"></script>
+<script>
+    $('#myTab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+    $('#myTab1 a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
+</script>
+<script>
+    var uid = null;
+    var app = new Vue({
+        el:"#app",
+        data:{
+            easyPayInfo:{},
+            mmm:""
+        },
+        methods:{
+            realName:function () {
+                uid = $("#uidofvalue").val();
+                // alert(uid);
+                let _this = this
+                axios.get("/lookRealNameState/"+uid).then(function (res) {
+                    if (res.data != null){
+                        if (res.data.state == 0){
+                            // alert(7865)
+                            _this.mmm = "正在实名认证"
+                            $('#menuTree').attr("style","display:none");
+                            return;
+                        }else if (res.data.state == 1){
+                            // alert(7865)
+                            _this.mmm = "实名认证成功"
+                            $('#menuTree').attr("style","display:none");
+                            return;
+                        } else if (res.data.state == 2){
+                            // alert(7865)
+                            _this.mmm = "实名认证失败"
+                            $('#menuTree1').attr("style","display:none");
+                            return;
+                        } else {
+                            _this.mmm = "未实名认证"
+                            $('#menuTree1').attr("style","display:none");
+                        }
+                    }  else {
+                        _this.mmm = "未实名认证"
+                        $('#menuTree1').attr("style","display:none");
+                    }
+
+                })
+                axios.get("/looEasyPayInfo/"+uid).then(function (res) {
+                    if (res.data != null) {
+                        if (res.data.epid != null) {
+
+                            _this.easyPayInfo = res.data
+                            $('#menuTree3').attr("style","display:none");
+                        }else {
+                            $('#menuTree4').attr("style","display:none");
+                        }
+                    } else {
+                        $('#menuTree4').attr("style","display:none");
+                    }
+                })
+            }
+        },
+        created:function () {
+            this.realName()
+        }
+    })
+</script>
+
+</body>
+</html>

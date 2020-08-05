@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css"
+          th:href="@{/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}">
+    <link rel="stylesheet" type="text/css" href="/css/carousel.css" th:href="@{/css/carousel.css}">
+
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+<div class="navbar-wrapper">
+    <div class="container">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header" style="margin-left: 10%">
+                    <a class="navbar-brand" th:href="@{/index}" style="font-size:32px;">人人筹平台</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse" style="float:right;margin-right: 10%">
+                    <ul class="nav navbar-nav navbar-right" id="loginInfo">
+                        <li><a th:href="@{/login}">登录</a></li>
+                        <li><a th:href="@{/reg}">注册</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav" id="userInfo" style="display: none">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i
+                                    class="glyphicon glyphicon-user"></i><span id="name"></span> <span
+                                    class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a th:href="@{/member}"><i class="glyphicon glyphicon-scale"></i> 会员中心</a></li>
+                                <li><a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a></li>
+                                <li class="divider"></li>
+                                <li><a th:href="@{/exit}"><i class="glyphicon glyphicon-off"></i> 退出系统</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    </div>
+</div>
+
+<!-- Carousel
+================================================== -->
+<div id="myCarousel" class="carousel slide" data-ride="carousel" style="width: 80%;margin-left: 10%">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner" role="listbox" id="app1">
+        <div class="item active" style="cursor:pointer;" @click="getProjectById(pro.pid)" v-if="pro.state == 1">
+            <img :src="pro.ipimag" alt="First slide" style="width: 100%;height: 100%">
+        </div>
+        <div class="item" style="cursor:pointer;" @click="getProjectById(p.pid)" v-for="(p,index) in project" v-if="p.state == 1">
+            <img :src="p.ipimag" alt="Second slide" style="width: 100%;height: 100%">
+        </div>
+    </div>
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+        <span class="sr-only">Next</span>
+    </a>
+    <!--<div>-->
+    <!--{{pros}}-->
+    <!--</div>-->
+</div><!-- /.carousel -->
+
+
+<!-- Marketing messaging and featurettes
+================================================== -->
+<!-- Wrap the rest of the page in another container to center all the content. -->
+<div class="container marketing" id="app2">
+
+    <!-- Three columns of text below the carousel -->
+    <div class="row">
+        <div class="col-lg-4" v-for="p in project" v-if="p.state == 1">
+            <img class="img-circle" :src="p.ipimag" alt="Generic placeholder image"
+                 style="width: 140px; height: 140px;">
+            <h2>{{p.ipname}}</h2>
+            <p>{{p.ipdesc}}。</p>
+            <p><a class="btn btn-default" @click="getProjectById(p.pid)" role="button">项目详情 &raquo;</a></p>
+        </div><!-- /.col-lg-4 -->
+
+    </div><!-- /.row -->
+
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="box ui-draggable" id="mainBox1">
+                    <div class="mHd" style="">
+                        <div class="path">
+                            <a th:href="@{/projects}">更多...</a>
+                        </div>
+                        <h3>
+                            {{types1.ctype}}
+                        </h3>
+                    </div>
+                    <div class="mBd" style="padding-top:10px;">
+                        <div class="row">
+                            <div class="col-md-3" v-for="(p1,index) in pro1"
+                                 v-if="p1.ctid == types1.ctid && index <= 3 && p1.state == 1">
+                                <div class="thumbnail">
+                                    <img alt="300x200" :src="p1.ipimag" style="width: 300px;height: 200px"/>
+                                    <div class="caption">
+                                        <h3 class="break">
+                                            <a @click="getProjectById(p1.pid)">{{p1.ipname}}</a>
+                                        </h3>
+                                        <p>
+                                        <div style="float:left;"><i class="glyphicon glyphicon-screenshot"
+                                                                    title="目标金额"></i> ${{p1.ipmoney}}
+                                        </div>
+                                        <div style="float:right;"><i title="剩余时间"
+                                                                     class="glyphicon glyphicon-calendar"></i>
+                                            {{p1.day}}天
+                                        </div>
+                                        </p>
+                                        <br>
+                                        <div class="progress" style="margin-bottom: 4px;">
+                                            <div class="progress-bar progress-bar-success" role="progressbar"
+                                                 aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"
+                                                 :style="{'width':+p1.money/p1.ipmoney*100+'%'}">
+                                                <span>{{p1.rate}}% </span>
+                                            </div>
+                                        </div>
+                                        <div><span style="float:right;"><i
+                                                class="glyphicon glyphicon-star-empty"></i></span> <span><i
+                                                class="glyphicon glyphicon-user"
+                                                title="支持人数"></i> {{p1.attentions}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="box ui-draggable" id="mainBox2">
+                    <div class="mHd" style="">
+                        <div class="path">
+                            <a th:href="@{/projects}">更多...</a>
+                        </div>
+                        <h3>
+                            {{types2.ctype}}
+                        </h3>
+                    </div>
+                    <div class="mBd" style="padding-top:10px;">
+                        <div class="row">
+                            <div class="col-md-3" v-for="(p1,index) in pro2"
+                                 v-if="p1.ctid == types2.ctid && index <= 3 && p1.state == 1">
+                                <div class="thumbnail">
+                                    <img alt="300x200" :src="p1.ipimag" style="width: 300px;height: 200px"/>
+                                    <div class="caption">
+                                        <h3 class="break">
+                                            <a @click="getProjectById(p1.pid)">{{p1.ipname}}</a>
+                                        </h3>
+                                        <p>
+                                        <div style="float:left;"><i class="glyphicon glyphicon-screenshot"
+                                                                    title="目标金额"></i> ${{p1.ipmoney}}
+                                        </div>
+                                        <div style="float:right;"><i title="剩余时间"
+                                                                     class="glyphicon glyphicon-calendar"></i>
+                                            {{p1.day}}天
+                                        </div>
+                                        </p>
+                                        <br>
+                                        <div class="progress" style="margin-bottom: 4px;">
+                                            <div class="progress-bar progress-bar-success" role="progressbar"
+                                                 aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"
+                                                 :style="{'width':+p1.money/p1.ipmoney*100+'%'}">
+                                                <span>{{p1.rate}}% </span>
+                                            </div>
+                                        </div>
+                                        <div><span style="float:right;"><i
+                                                class="glyphicon glyphicon-star-empty"></i></span> <span><i
+                                                class="glyphicon glyphicon-user"
+                                                title="支持人数"></i> {{p1.attentions}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="box ui-draggable" id="mainBox3">
+                    <div class="mHd" style="">
+                        <div class="path">
+                            <a th:href="@{/projects}">更多...</a>
+                        </div>
+                        <h3>
+                            {{types3.ctype}}
+                        </h3>
+                    </div>
+                    <div class="mBd" style="padding-top:10px;">
+                        <div class="row">
+                            <div class="col-md-3" v-for="(p1,index) in pro3"
+                                 v-if="p1.ctid == types3.ctid && index <= 3 && p1.state == 1">
+                                <div class="thumbnail">
+                                    <img alt="300x200" :src="p1.ipimag" style="width: 300px;height: 200px"/>
+                                    <div class="caption">
+                                        <h3 class="break">
+                                            <a @click="getProjectById(p1.pid)">{{p1.ipname}}</a>
+                                        </h3>
+                                        <p>
+                                        <div style="float:left;"><i class="glyphicon glyphicon-screenshot"
+                                                                    title="目标金额"></i> ${{p1.ipmoney}}
+                                        </div>
+                                        <div style="float:right;"><i title="剩余时间"
+                                                                     class="glyphicon glyphicon-calendar"></i>
+                                            {{p1.day}}天
+                                        </div>
+                                        </p>
+                                        <br>
+                                        <div class="progress" style="margin-bottom: 4px;">
+                                            <div class="progress-bar progress-bar-success" role="progressbar"
+                                                 aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"
+                                                 :style="{'width':+p1.money/p1.ipmoney*100+'%'}">
+                                                <span>{{p1.rate}}% </span>
+                                            </div>
+                                        </div>
+                                        <div><span style="float:right;"><i
+                                                class="glyphicon glyphicon-star-empty"></i></span> <span><i
+                                                class="glyphicon glyphicon-user"
+                                                title="支持人数"></i> {{p1.attentions}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="box ui-draggable" id="mainBox4">
+                    <div class="mHd" style="">
+                        <div class="path">
+                            <a th:href="@{/projects}">更多...</a>
+                        </div>
+                        <h3>
+                            {{types4.ctype}}
+                        </h3>
+                    </div>
+                    <div class="mBd" style="padding-top:10px;">
+                        <div class="row">
+                            <div class="col-md-3" v-for="(p1,index) in pro4"
+                                 v-if="p1.ctid == types4.ctid && index <= 3 && p1.state == 1">
+                                <div class="thumbnail">
+                                    <img alt="300x200" :src="p1.ipimag" style="width: 300px;height: 200px"/>
+                                    <div class="caption">
+                                        <h3 class="break">
+                                            <a @click="getProjectById(p1.pid)">{{p1.ipname}}</a>
+                                        </h3>
+                                        <p>
+                                        <div style="float:left;"><i class="glyphicon glyphicon-screenshot"
+                                                                    title="目标金额"></i> ${{p1.ipmoney}}
+                                        </div>
+                                        <div style="float:right;"><i title="剩余时间"
+                                                                     class="glyphicon glyphicon-calendar"></i>
+                                            {{p1.day}}天
+                                        </div>
+                                        </p>
+                                        <br>
+                                        <div class="progress" style="margin-bottom: 4px;">
+                                            <div class="progress-bar progress-bar-success" role="progressbar"
+                                                 aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"
+                                                 :style="{'width':+p1.money/p1.ipmoney*100+'%'}">
+                                                <span>{{p1.rate}}% </span>
+                                            </div>
+                                        </div>
+                                        <div><span style="float:right;"><i
+                                                class="glyphicon glyphicon-star-empty"></i></span> <span><i
+                                                class="glyphicon glyphicon-user"
+                                                title="支持人数"></i> {{p1.attentions}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div id="footer">
+                    <div class="footerNav">
+                        <a rel="nofollow" href="http://www.qf.com">关于我们</a> | <a rel="nofollow"
+                                                                                 href="http://www.qf.com">服务条款</a> |
+                        <a rel="nofollow" href="http://www.qf.com">免责声明</a> | <a rel="nofollow"
+                                                                                 href="http://www.qf.com">网站地图</a> |
+                        <a rel="nofollow" href="http://www.qf.com">联系我们</a>
+                    </div>
+                    <div class="copyRight">
+                        Copyright ?2017-2017qf.com 版权所有
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.container -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    登录
+                </h4>
+            </div>
+            <div class="modal-body" style="width: 100%">
+                <div class="input-group" style="width: 100%">
+                    <div class="form-group" style="width: 100%" id="login">
+                        <form class="form-signin" role="form" action="" method="">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="请输入登录账号"
+                                       aria-describedby="basic-addon2" name="username" v-model="user.username">
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-user form-control-feedback"></span></span>
+                            </div>
+                            <div class="input-group">
+                                <input type="password" class="form-control" placeholder="请输入登录密码"
+                                       aria-describedby="basic-addon2" name="password" v-model="user.password"
+                                       style="margin-top:10px;">
+                                <span class="input-group-addon"><span
+                                        class="glyphicon glyphicon-lock form-control-feedback"></span></span>
+                            </div>
+                            <div class="input-group">
+                                <span id="msg" style="display: none">账号或密码错误，请重新登录！</span>
+                            </div>
+                            <div class="checkbox">
+                                <label style="float:right">
+                                    <a th:href="@{/reg}">我要注册</a>
+                                </label>
+                            </div>
+                            <input class="btn btn-lg btn-success btn-block" @click="login()" type="button" value="登录">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+<script src="/jquery/jquery-2.1.1.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/script/docs.min.js"></script>
+<script src="/script/back-to-top.js"></script>
+<script>
+    $(".thumbnail img").css("cursor", "pointer");
+    $(".thumbnail img").click(function () {
+        window.location.href = "project.html";
+    });
+</script>
+<script>
+    var app = new Vue({
+        el: "#login",
+        data: {
+            user: {}
+        },
+        methods: {
+            login: function () {
+                let _this = this
+                console.log(_this.user)
+                axios.post("/pagelogin", _this.user).then(function (res) {
+                    console.log(res.data)
+                    if (res.data.uid != null) {
+                        $('#myModal').modal('hide');
+                        $("#loginInfo").attr("style", "display:none");
+                        $("#userInfo").attr("style", "display:block");
+                        $("#name").text(res.data.headportrait)
+                    } else {
+                        $('#msg').attr("style", "display:block");
+                        $("#msg").attr("style", "color: red;");
+                    }
+                })
+            },
+            getUserInfo: function () {
+                axios.get("/getUserInfo").then(function (res) {
+                    if (res.data.uid != null) {
+                        $("#loginInfo").attr("style", "display:none");
+                        $("#userInfo").attr("style", "display:block");
+                        $("#name").text(res.data.headportrait)
+                    }
+                })
+            }
+        },
+        created: function () {
+            this.getUserInfo();
+        }
+    })
+</script>
+<script>
+    var app = new Vue({
+        el: "#app1",
+        data: {
+            pro: {},
+            project: [],
+            projects: [],
+            types1: {},
+            types2: {},
+            types3: {},
+            types4: {},
+            pro1: [],
+            pro2: [],
+            pro3: [],
+            pro4: []
+        },
+        methods: {
+            getProject: function () {
+                let _this = this
+                axios.get("/getProjects").then(function (res) {
+                    _this.pro = res.data[0]
+                    for (i = 1; i < 3; i++) {
+                        _this.project.push(res.data[i])
+                    }
+                })
+            },
+            getProjectById: function (pid) {
+                // alert(pid)
+                axios.get("getProjectByPid/" + pid).then(function (res) {
+                    console.log(res.data)
+                    // alert(res.data)
+                    if (res.data == 0) {
+                        window.location.href = "project/" + pid
+                    } else {
+                        var mymessage = confirm("你还没有登录，需要登陆吗？");
+                        if (mymessage == true) {
+                            $('#myModal').modal('show');
+                        } else {
+
+                        }
+                    }
+                })
+
+            }
+        },
+        created: function () {
+            this.getProject();
+        }
+    })
+</script>
+<script>
+    var app = new Vue({
+        el: "#app2",
+        data: {
+            pro: {},
+            project: [],
+            projects: [],
+            types1: {},
+            types2: {},
+            types3: {},
+            types4: {},
+            pro1: [],
+            pro2: [],
+            pro3: [],
+            pro4: []
+        },
+        methods: {
+            getProject: function () {
+                let _this = this
+                axios.get("/getAllProjects").then(function (res) {
+                    _this.projects = res.data
+                    // console.log(_this.projects)
+
+                    console.log(123123)
+                    console.log(res.data[0].ctid)
+                    for (i = 0; i < res.data.length; i++) {
+                        if (res.data[i].ctid == 1) {
+                            _this.pro1.push(res.data[i])
+                        }
+                        if (res.data[i].ctid == 2) {
+                            _this.pro2.push(res.data[i])
+                        }
+                        if (res.data[i].ctid == 3) {
+                            _this.pro3.push(res.data[i])
+                        }
+                        if (res.data[i].ctid == 4) {
+                            _this.pro4.push(res.data[i])
+                        }
+                    }
+                    console.log(_this.pro1)
+                    console.log(_this.pro2)
+                    console.log(_this.pro3)
+                    console.log(_this.pro4)
+                })
+                axios.get("/getType").then(function (res) {
+                    for (i = 0; i < res.data.length; i++) {
+                        if (res.data[i].ctid == 1) {
+
+                            _this.types1 = res.data[i]
+                            console.log("***********************")
+                            console.log(_this.types1)
+                        }
+                        if (res.data[i].ctid == 2) {
+
+                            _this.types2 = res.data[i]
+                            console.log("***********************")
+                            console.log(_this.types2)
+                        }
+                        if (res.data[i].ctid == 3) {
+
+                            _this.types3 = res.data[i]
+                            console.log("***********************")
+                            console.log(_this.types3)
+                        }
+                        if (res.data[i].ctid == 4) {
+
+                            _this.types4 = res.data[i]
+                            console.log("***********************")
+                            console.log(_this.types4)
+                        }
+                    }
+                })
+            },
+            getProjectById: function (pid) {
+                // alert(pid)
+                axios.get("getProjectByPid/" + pid).then(function (res) {
+                    console.log(res.data)
+                    // alert(res.data)
+                    if (res.data == 0) {
+                        window.location.href = "project/" + pid
+                    } else {
+                        var mymessage = confirm("你还没有登录，需要登陆吗？");
+                        if (mymessage == true) {
+                            $('#myModal').modal('show');
+                        } else {
+
+                        }
+                    }
+                })
+
+            }
+        },
+        created: function () {
+            this.getProject();
+        }
+    })
+</script>
+</body>
+</html>

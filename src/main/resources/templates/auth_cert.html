@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <style>
+        .tree li {
+            list-style-type: none;
+            cursor:pointer;
+        }
+        table tbody tr:nth-child(odd){background:#F4F4F4;}
+        table tbody td:nth-child(even){color:#C00;}
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <div><a class="navbar-brand" style="font-size:32px;" href="#">众筹平台 - 实名认证审核</a></div>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li style="padding-top:8px;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default btn-success dropdown-toggle" data-toggle="dropdown">
+                            <i class="glyphicon glyphicon-user"></i> <span th:text="${user.login}"></span> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#"><i class="glyphicon glyphicon-cog"></i> 个人设置</a></li>
+                            <li><a href="#"><i class="glyphicon glyphicon-comment"></i> 消息</a></li>
+                            <li class="divider"></li>
+                            <li><a th:href="@{exit}"><i class="glyphicon glyphicon-off"></i> 退出系统</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input type="text" class="form-control" placeholder="Search...">
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid" id="app">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <div class="tree">
+                <ul style="padding-left:0px;" class="list-group">
+                    <li class="list-group-item tree-closed">
+                        <a href="main.html"><i class="glyphicon glyphicon-dashboard"></i> 用户管理</a>
+                    </li>
+                    <li class="list-group-item">
+                        <span><i class="glyphicon glyphicon-ok"></i> 业务审核 <span class="badge" style="float:right">3</span></span>
+                        <ul style="margin-top:10px;">
+                            <li style="height:30px;">
+                                <a th:href="@{/auth_cert}" style="color:red;"><i class="glyphicon glyphicon-check"></i> 实名认证审核</a>
+                            </li>
+                            <li style="height:30px;">
+                                <a th:href="@{/auth_project}"><i class="glyphicon glyphicon-check"></i> 项目审核</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="list-group-item tree-closed">
+                        <span><i class="glyphicon glyphicon-th-large"></i> 业务管理 <span class="badge" style="float:right">7</span></span>
+                        <ul style="margin-top:10px;display:none;">
+                            <li style="height:30px;">
+                                <a href="cert.html"><i class="glyphicon glyphicon-picture"></i> 轮播图管理</a>
+                            </li>
+                            <li style="height:30px;">
+                                <a href="type.html"><i class="glyphicon glyphicon-equalizer"></i> 分类管理</a>
+                            </li>
+                            <li style="height:30px;">
+                                <a href="process.html"><i class="glyphicon glyphicon-random"></i> 首页项目展示管理</a>
+                            </li>
+                            <li style="height:30px;">
+                                <a href="project_type.html"><i class="glyphicon glyphicon-list"></i> 项目分类</a>
+                            </li>
+                            <li style="height:30px;">
+                                <a href="tag.html"><i class="glyphicon glyphicon-tags"></i> 项目标签</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="glyphicon glyphicon-th"></i> 数据列表</h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-inline" role="form" style="float:left;">
+                        <div class="form-group has-feedback">
+                            <div class="input-group">
+                                <div class="input-group-addon">查询条件</div>
+                                <input class="form-control has-success" type="text" placeholder="请输入查询条件">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> 查询</button>
+                    </form>
+                    <br>
+                    <hr style="clear:both;">
+                    <div class="table-responsive">
+                        <table class="table  table-bordered">
+                            <thead>
+                            <tr>
+                                <th width="30">#</th>
+                                <th>真实姓名</th>
+                                <th>身份证号码</th>
+                                <th>电话号码</th>
+                                <th>学号</th>
+                                <th>学校</th>
+                                <th>班级</th>
+                                <th>家长的学生</th>
+                                <th>教室编号</th>
+                                <th>审核状态</th>
+                                <th width="100">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(rs,index) in realNameInfo">
+                                    <tr v-for="r in rs">
+                                        <td>{{index + 1}}</td>
+                                        <td>{{r.realname}}</td>
+                                        <td>{{r.cardnum}}</td>
+                                        <td>{{r.tel}}</td>
+                                        <td>{{r.stunum}}</td>
+                                        <td>{{r.school}}</td>
+                                        <td>{{r.classname}}</td>
+                                        <td>{{r.stuname}}</td>
+                                        <td>{{r.certificate}}</td>
+                                        <td>{{r.state == 1 ? "已审核":(r.state == 2 ? "审核失败":"未审核")}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-success btn-xs" @click="toAudit(r)"><i class=" glyphicon glyphicon-check"></i></button>
+                                            <button type="button" class="btn btn-danger btn-xs"><i class=" glyphicon glyphicon-remove"></i></button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                            <tfoot style="display: none">
+                            <tr >
+                                <td colspan="9" align="center">
+                                    <ul class="pagination">
+                                        <li class="disabled"><a href="#">上一页</a></li>
+                                        <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+                                        <li><a href="#">2</a></li>
+                                        <li><a href="#">3</a></li>
+                                        <li><a href="#">4</a></li>
+                                        <li><a href="#">5</a></li>
+                                        <li><a href="#">下一页</a></li>
+                                    </ul>
+                                </td>
+                            </tr>
+
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/jquery/jquery-2.1.1.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script src="/script/docs.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".list-group-item").click(function(){
+            if ( $(this).find("ul") ) {
+                $(this).toggleClass("tree-closed");
+                if ( $(this).hasClass("tree-closed") ) {
+                    $("ul", this).hide("fast");
+                } else {
+                    $("ul", this).show("fast");
+                }
+            }
+        });
+    });
+</script>
+<script>
+    var app = new Vue({
+        el:"#app",
+        data:{
+            realNameInfo:[],
+            lll:[
+                [
+                    { "udid": 6, "uid": 1, "rtid": 1, "realname": "王成", "cardnum": "621226199708141071", "tel": "18893093757", "stunum": "20161030146", "school": "天水师范学院", "classname": "16计科一班", "photo": "da7d0b8c848444d48604977cfeb147591.jpg", "state": 1 }
+                ],
+                [
+                    { "udid": 1, "uid": 2, "rtid": 2, "realname": "李四", "cardnum": "622628199508151051", "tel": "18893093757", "certificate": "TX-5525465", "school": "天水师范学院", "photo": "8d7e8bb5519c4d89a6f4e71d02e48798笔.jpg", "state": 0 }
+                ]
+            ]
+        },
+        methods:{
+            getAllRealNameInfo:function () {
+                let _this = this
+                axios.get("getAllRealNameInfo").then(function (res) {
+                    _this.realNameInfo = res.data
+                    console.log(_this.realNameInfo)
+                })
+            },
+            toAudit:function (r) {
+                // alert(rtid);
+                // alert(udid)
+                let _this = this
+                console.log(r)
+                axios.post("/toAudit" ,r).then(function (res) {
+                    if (res.data){
+                        axios.get("getAllRealNameInfo").then(function (res) {
+                            _this.realNameInfo = res.data
+                        })
+                    }
+                })
+            }
+        },
+        created:function () {
+            this.getAllRealNameInfo();
+        }
+    })
+</script>
+</body>
+</html>

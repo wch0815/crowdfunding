@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cheng.dao.IRealNameDao">
+
+
+    <select id="getRealNameType" resultType="RealNameAuthenticationType">
+        select * from tb_real_name_authentication_type
+    </select>
+
+    <insert id="saveStuRealNameInfo">
+        insert into tb_sturealnameinfo values (null,#{uid},#{rtid},#{realname},#{cardnum},#{tel},#{stunum},#{school},#{classname},#{photo},0)
+    </insert>
+
+    <insert id="saveTeaRealNameInfo">
+        insert into tb_tearealnameinfo values (null,#{uid},#{rtid},#{realname},#{cardnum},#{tel},#{certificate},#{school},#{photo},0)
+    </insert>
+
+    <insert id="savePatRealNameInfo">
+        insert into tb_patriarchrealnameinfo values (null,#{uid},#{rtid},#{realname},#{cardnum},#{tel},#{stuname},#{classname},#{photo},0)
+    </insert>
+
+    <select id="getStuRealNameInfos" resultType="StuRealNameInfo">
+        select * from tb_sturealnameinfo
+    </select>
+
+    <select id="getTeaRealNameInfos" resultType="TeaRealNameInfo">
+        select * from tb_tearealnameinfo
+    </select>
+
+    <select id="getPatriarchRealNameInfos" resultType="PatriarchRealNameInfo">
+        select * from tb_patriarchrealnameinfo
+    </select>
+
+    <update id="toAuditOfStu">
+        update tb_sturealnameinfo set state = 1 where udid = #{udid}
+    </update>
+
+    <update id="toAuditOfTea">
+        update tb_tearealnameinfo set state = 1 where udid = #{udid}
+    </update>
+
+    <update id="toAuditOfPat">
+        update tb_patriarchrealnameinfo set state = 1 where udid = #{udid}
+    </update>
+
+    <select id="selectRealNameInfo" resultType="RealNameInfo">
+        select * from tb_real_name_info
+        <where>
+            <if test="realname != null and realname != ''">
+               and realname = #{realname}
+            </if>
+            <if test="cardnum != null and cardnum != ''">
+               and cardnum = #{cardnum}
+            </if>
+            <if test="school != null and school != ''">
+                and school = #{school}
+            </if>
+            <if test="classname != null and classname != ''">
+                and classname = #{classname}
+            </if>
+            <if test="stunum != null and stunum != ''">
+                and stunum = #{stunum}
+            </if>
+            <if test="stuname != null and stuname != ''">
+                and stuname = #{stuname}
+            </if>
+            <if test="certificate != null and certificate != ''">
+                and certificate = #{certificate}
+            </if>
+        </where>
+    </select>
+
+    <update id="toAuditFailureOfStu">
+        update tb_sturealnameinfo set state = 2 where udid = #{udid}
+    </update>
+
+    <update id="toAuditFailureOfTea">
+        update tb_tearealnameinfo set state = 2 where udid = #{udid}
+    </update>
+
+    <update id="toAuditFailureOfPat">
+        update tb_patriarchrealnameinfo set state = 2 where udid = #{udid}
+    </update>
+
+</mapper>

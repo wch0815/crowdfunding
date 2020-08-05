@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cheng.dao.ICrowdFundingDao">
+
+
+    <select id="getCrowdfundingType" resultType="CrowdfundingType">
+        select * from tb_crowdfunding_type
+    </select>
+
+    <select id="getCrowdfundingLabel" resultType="CrowdfundingLabel">
+        select * from tb_crowdfunding_label
+    </select>
+
+    <insert id="addCrowdFundingInfo" useGeneratedKeys="true" keyProperty="pid">
+        insert into tb_projects values (null,#{ctid},#{ipname},#{ipdesc},#{ipmoney},#{ipday},#{ipimag},#{ipdescimag},now(),#{reminders},0,0,0)
+    </insert>
+
+    <insert id="addSponsorInformation">
+        insert into tb_sponsor_information values (null, #{pid}, #{siintroduction}, #{siintroductiondesc}, #{siphone}, #{siservicetel})
+    </insert>
+
+    <insert id="addMyInitiate">
+        insert into tb_my_initiate values (null, #{pid}, #{uid})
+    </insert>
+
+    <insert id="addCrowdFundingLabel">
+        insert into tb_crowdfundingoflabel values (null, #{clid}, #{pid})
+    </insert>
+
+    <insert id="savePayBack">
+        insert into tb_pay_back values (null, #{pid}, #{pdtype}, #{pbcontent}, #{pbimag}, #{pbdate})
+    </insert>
+
+    <select id="selectEasyPay" resultType="EasyPay">
+        select * from tb_easy_pay where epaccountnumber = #{epaccountnumber} and eppassword = #{eppassword}
+    </select>
+
+</mapper>
